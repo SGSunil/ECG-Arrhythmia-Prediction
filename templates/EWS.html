@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script src="http://code.highcharts.com/stock/highstock.js"></script>
+	<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+	<script src="static/chart.js"></script>
+	<script type="text/javascript" src="static/jquery.sparkline.min.js"></script>
+	<script>
+	$(function() {
+ 	 var myvalues = [60, 80, 85, 80, 75, 60, 80];
+    $('#sparkline').sparkline(myvalues, {
+    type: "line",
+    height:20,
+    width:30
+   }); 
+   
+ $("#patient").change(function()
+ {    
+	var val = $(this).find(":selected").val();
+	console.log(val);
+	dt = {id:val};
+	$.ajax
+	({
+		type: 'POST',
+		contentType: 'application/json',
+		dataType : 'json',
+		url: '/setPatient',
+		data:JSON.stringify(dt),
+		cache: false,
+		success: function(r)
+		{
+		console.log(r);
+		} 
+	});
+
+	var seriesLength = chart.series.length;
+	for(var i = seriesLength -1; i > -1; i--) {
+	    chart.series[i].remove();
+	}
+
+	chart.addSeries({
+	    type: 'spline',
+	    data: [],
+	    color:'#333',
+	    name: "heart beats (360 Hz)"
+	});
+	
+    /*var newSeriesData = {
+    	type: 'line',
+	    name: 'arrhythmia classification',
+	    data: [],
+	    color:'#333'
+    };
+    chart.series.push(newSeriesData);*/
+ 
+ });
+ 
+ });
+	</script>
+</head>
+<body>
+<div class="w3-container w3-blue">
+  		<h1>EWS - Heart health (ECG)</h1>
+  	</div> 
+</div>
+<div class="w3-row">
+	<div class="w3-col s1 w3-blue w3-center" >
+    select patient 
+    </div>
+	<div class="w3-dropdown-hover w3-col s1 w3-blue w3-center">
+  	<select class="w3-select" name="option" id="patient">
+	    <option value="1">Sunil(1)</option>
+	   <option value="2">Umang(2)</option>
+	    <option value="3">John(3)</option>
+	    <option value="4">Jerry(4)</option>
+	    <option value="5">Maggie(5)</option>
+	    <option value="6">Ram(6)</option>
+	 </select>
+	 </div>
+	 <div class="w3-col s1 w3-blue w3-center" style="width:50px">
+     HR
+    </div>
+    	 <div class="w3-col s1 w3-blue w3-left" style="width:60px"> 
+	 	<span id="HR" class="sparkline">70</span>BPM
+    </div>	 
+	 <div class="w3-col s1 w3-blue w3-left" style="width:100px"> 
+	 	<span id="sparkline" class="sparkline"></span>
+    </div>	
+     <div class="w3-col s1 w3-blue w3-left" style="width:100px"> 
+	 	<span id="HC" class="HC">Normal</span>
+    </div> 
+  	</div>
+</div>
+	<div id="container" style="height: 300px; width: 600px"></div>
+</body>
+</html>
